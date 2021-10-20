@@ -8,12 +8,15 @@ public class Spil {
     public static final String SORT_SKRIFT = "\u001B[30m";
     public static final String GUL_BAGGRUND = "\u001B[43m";
     public static final String FED_SKRIFT = "\033[0;1m";
+    public static final String RØD_BAGGRUND = "\u001B[41m";
+    private Clip clip;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Spil spil = new Spil();
         spil.welcome();
     }
-    Felt maldiverne = new Felt (0, "Maldiverne", -2000, false, 1);
+
+    Felt maldiverne = new Felt(0, "Maldiverne", 0, false, 1);
     Felt tower = new Felt(1, "tower", 250, false, 2);
     Felt crater = new Felt(2, "Crater", -100, false, 3);
     Felt palace_gates = new Felt(3, "Palace Gates", 100, false, 4);
@@ -27,8 +30,8 @@ public class Spil {
     Felt goldmine = new Felt(11, "Goldmine", 650, false, 12);
 
     public void welcome() {
-        baggrundsMusik();
-        pokemonTekstPrint( FED_SKRIFT +"Velkommen til del 2 af CDIO projektet.", 70);
+        afspilAudio("D:\\Projects\\Ny mappe\\CDIO2\\Spil\\src\\musik.wav");
+        pokemonTekstPrint(FED_SKRIFT + "Velkommen til del 2 af CDIO projektet.", 70);
         pokemonTekstPrint("Tast 's' for at starte spillet.", 70);
         Scanner scanner = new Scanner(System.in);
         String input = scanner.next();
@@ -51,27 +54,43 @@ public class Spil {
             if (input.equalsIgnoreCase("l")) {
                 playerTurn(spiller2);
             }
-            if (input.equalsIgnoreCase("e")){
+            if (input.equalsIgnoreCase("e")) {
                 pokemonTekstPrint("Spillet er blevet afsluttet. Tak fordi I spillede!", 70);
                 break;
             }
-            if (input.equalsIgnoreCase("r")){
+            if (input.equalsIgnoreCase("r")) {
                 pokemonTekstPrint("Spillet bliver genstartet. Vent et øjeblik.", 70);
                 pause(3000);
+                stopAudio();
                 welcome();
             }
-            if(spiller1.konto.getBalance() >=3000){
+            if (spiller1.konto.getBalance() >= 3000) {
+                stopAudio();
+                afspilAudio("D:\\Projects\\Ny mappe\\CDIO2\\Spil\\src\\vindermusik.wav");
                 System.out.println("");
                 String vindertekst;
-                vindertekst = "VINDEREN ER " + spiller1.getName() + "! TILYKKE!";
-                pokemonTekstPrint(GUL_BAGGRUND + SORT_SKRIFT +vindertekst.toUpperCase(), 70);
+                vindertekst = "VINDEREN ER " + spiller1.getName() + "! tillykke shab :)";
+                pokemonTekstPrint(GUL_BAGGRUND + SORT_SKRIFT + vindertekst.toUpperCase(), 70);
                 break;
-            } else if (spiller2.konto.getBalance() >= 3000){
+            } else if (spiller2.konto.getBalance() >= 3000) {
+                stopAudio();
+                afspilAudio("D:\\Projects\\Ny mappe\\CDIO2\\Spil\\src\\vindermusik.wav");
                 System.out.println("");
                 String vindertekst2;
-                vindertekst2 = "VINDEREN ER " + spiller2.getName() + "! TILYKKE!";
-                pokemonTekstPrint(GUL_BAGGRUND + SORT_SKRIFT +vindertekst2.toUpperCase(), 70);
+                vindertekst2 = "VINDEREN ER " + spiller2.getName() + "! tillykke shab :)";
+                pokemonTekstPrint(GUL_BAGGRUND + SORT_SKRIFT + vindertekst2.toUpperCase(), 70);
                 break;
+            }
+            if (spiller1.konto.getBalance() <= 0) {
+                stopAudio();
+                afspilAudio("D:\\Projects\\Ny mappe\\CDIO2\\Spil\\src\\taberMusik.wav");
+                pokemonTekstPrint(RØD_BAGGRUND + spiller1.getName() + ", din lille loser, man. Du har tabt til din yngre", 70);
+                pokemonTekstPrint("Er det en ommer din taber? Tast 'r' for at genstarte spillet, ellers tast 'e'", 70);
+            } else if (spiller2.konto.getBalance() <= 0) {
+                stopAudio();
+                afspilAudio("D:\\Projects\\Ny mappe\\CDIO2\\Spil\\src\\taberMusik.wav");
+                pokemonTekstPrint(RØD_BAGGRUND + spiller2.getName() + ", din lille loser, man. Du har tabt til din yngre", 70);
+                pokemonTekstPrint("Er det en ommer din taber? Tast 'r' for at genstarte spillet, ellers tast 'e'", 70);
             }
         }
     }
@@ -114,7 +133,7 @@ public class Spil {
         }
         if (s.getPosition() == tower.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + tower.getInfluenceOnBalance());
-            pokemonTekstPrint("Du har fundet 250kr i tårnet! Din balance er på: " + s.konto.getBalance() + "!", 70);
+            pokemonTekstPrint("Du har fundet 250kr i tårnet! Din balance er på: " + s.konto.getBalance(), 70);
 
         } else if (s.getPosition() == crater.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + crater.getInfluenceOnBalance());
@@ -122,7 +141,7 @@ public class Spil {
 
         } else if (s.getPosition() == palace_gates.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + palace_gates.getInfluenceOnBalance());
-            pokemonTekstPrint("Du har lige fundet 100kr ved paladsets porte! Din balance er på: " + s.konto.getBalance() + "!", 70);
+            pokemonTekstPrint("Du har lige fundet 100kr ved paladsets porte! Din balance er på: " + s.konto.getBalance(), 70);
 
         } else if (s.getPosition() == cold_desert.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + cold_desert.getInfluenceOnBalance());
@@ -130,7 +149,7 @@ public class Spil {
 
         } else if (s.getPosition() == walled_city.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + walled_city.getInfluenceOnBalance());
-            pokemonTekstPrint("Du har lige fundet 180kr i Walled City! Din balance er på: " + s.konto.getBalance() + "!", 70);
+            pokemonTekstPrint("Du har lige fundet 180kr i Walled City! Din balance er på: " + s.konto.getBalance(), 70);
 
         } else if (s.getPosition() == monastery.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + monastery.getInfluenceOnBalance());
@@ -142,7 +161,7 @@ public class Spil {
 
         } else if (s.getPosition() == huts_in_the_mountain.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + huts_in_the_mountain.getInfluenceOnBalance());
-            pokemonTekstPrint("Du har fundet 60kr i hytterne på bjerget! Din balance er på: " + s.konto.getBalance() + "!", 70);
+            pokemonTekstPrint("Du har fundet 60kr i hytterne på bjerget! Din balance er på: " + s.konto.getBalance(), 70);
 
         } else if (s.getPosition() == the_werewall.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + the_werewall.getInfluenceOnBalance());
@@ -156,7 +175,7 @@ public class Spil {
 
         } else if (s.getPosition() == goldmine.getPosition()) {
             s.konto.setBalance(s.konto.getBalance() + goldmine.getInfluenceOnBalance());
-            pokemonTekstPrint("Du har fundet guld til 650kr i minen! Din balance er på: " + s.konto.getBalance() + "!", 70);
+            pokemonTekstPrint("Du har fundet guld til 650kr i minen! Din balance er på: " + s.konto.getBalance(), 70);
         }
     }
 
@@ -176,13 +195,17 @@ public class Spil {
         System.out.println(" ");
     }
 
-    public static void baggrundsMusik() {
+    public void stopAudio() {
+        clip.stop();
+    }
+
+    public void afspilAudio(String filepath) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("D:\\Projects\\Ny mappe\\CDIO2\\Spil\\src\\musik.wav").getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filepath));
+            clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
-            clip.loop(clip.LOOP_CONTINUOUSLY);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (Exception e) {
             System.out.println("Lydfilen kan ikke afspilles.");
             e.printStackTrace();
